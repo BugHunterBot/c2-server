@@ -568,14 +568,15 @@ def cleanup_old_data():
         except Exception as e:
             logger.error(f"Cleanup error: {e}")
 
-@app.before_first_request
-def startup():
-    os.makedirs('runtime', exist_ok=True)
-    os.makedirs('recordings', exist_ok=True)
-    init_db()
-    cleanup_thread = threading.Thread(target=cleanup_old_data, daemon=True)
-    cleanup_thread.start()
-    logger.info("Enhanced C2 Server started successfully")
+# Perform startup tasks when the module is loaded
+os.makedirs('runtime', exist_ok=True)
+os.makedirs('recordings', exist_ok=True)
+init_db()
+cleanup_thread = threading.Thread(target=cleanup_old_data, daemon=True)
+cleanup_thread.start()
+logger.info("Enhanced C2 Server started successfully")
 
 if __name__ == '__main__':
+    # This block is mainly for local development. 
+    # Production servers like Gunicorn import the 'app' object directly.
     app.run(host='0.0.0.0', port=5000, debug=False)
