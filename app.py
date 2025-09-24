@@ -245,12 +245,18 @@ def cleanup_agents():
             logger.error(f"Cleanup error: {e}")
         time.sleep(60) # Run every minute
 
-@app.before_first_request
-def startup():
+# CORRECTED STARTUP BLOCK
+# This code runs once when the application module is loaded by Gunicorn.
+with app.app_context():
     os.makedirs('runtime', exist_ok=True)
     os.makedirs('uploads', exist_ok=True)
     init_db()
-    threading.Thread(target=cleanup_agents, daemon=True).start()
+
+    # Check if the thread is already running to prevent duplicates
+    if not any(t.name == 'CleanupThread' for t in threading.enumerate()):
+        cleanup_thread = threading.Thread(target=cleanup_agents, daemon=True, name='CleanupThread')
+        cleanup_thread.start()
+    
     logger.info("Enhanced C2 Server started successfully.")
 
 if __name__ == '__main__':
