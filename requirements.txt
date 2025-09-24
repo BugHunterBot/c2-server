@@ -1,0 +1,4 @@
+flask==2.3.3
+pyjwt==2.8.0
+cryptography==41.0.7
+gunicorn==21.2.0

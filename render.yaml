@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: enhanced-c2-server
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:5000 --workers 2
+    envVars:
+      - key: C2_TOKEN
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
