@@ -4,11 +4,14 @@ services:
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:5000 --workers 2
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health
     envVars:
       - key: C2_TOKEN
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      - key: ENCRYPTION_KEY
+      - key: ENCRYPTION_KEY_B64 # Base64 encoded 32-byte key
         generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.10.6
